@@ -46,6 +46,6 @@ export class PlaylistService {
   }
 
   public async deleteMusicPlaylist(id: number): Promise<void> {
-    await PlaylistOwnerModel.query().delete().where({ id })
+    await PlaylistOwnerModel.query().delete().where({ music_id: id })
   }
 }
