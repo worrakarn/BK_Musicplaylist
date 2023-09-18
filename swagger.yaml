@@ -1,0 +1,163 @@
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: Playlist
+
+paths:
+  # [GET] Music Playlist
+  /playlist:
+    get:
+      tags:
+        - Playlist
+      summary: Search music playlist
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+        - in: query
+          name: owner
+          schema:
+            type: boolean
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: limit
+          schema:
+            type: number
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/response'
+                  - type: object
+                    properties:
+                      rs_data:
+                        type: array
+                        items:
+                          - $ref: '#/components/schemas/playlist'
+                        example:
+                          - id: number
+                            title: string
+                            singer: string
+                            album: string
+                            create_at: string
+                            is_my_playlist: true
+                            playlist_owner: {
+                              id: number,
+                              music_id: number
+                            }      
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+  # [POST] My Music Playlist
+  /playlist/owner:
+    post:
+      tags:
+        - Playlist
+      summary: Add music playlist owner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/playlist_add'
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/response'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+  # # [DELETE] My Music Playlist
+  /playlist/owner/{id}:
+    delete:
+      tags:
+        - Playlist
+      summary: Delete music playlist owner
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/response'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+components:
+  schemas:
+    playlist:
+      type: object
+      properties:
+        id:
+          type: number
+        is_my_playlist:
+          type: boolean
+        title:
+          type: string
+        album:
+          type: string
+        create_at:
+          type: string
+    playlist_add:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: number
+    playlist_delete:
+      type: object
+      properties:
+        id:
+          type: number
+    response:
+      type: object
+      properties:
+        rs_status:
+          type: integer
+        message:
+          type: string
+        code:
+          type: string
+        rs_data:
+          type: array
+          items:
+            type: any
+          example: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
