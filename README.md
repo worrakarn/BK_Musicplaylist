@@ -2,6 +2,8 @@
 
 This backend playlist music
 
+When run docker complete you must run migrate and seed.
+
 ## Docker Setup
 
 ```sh
